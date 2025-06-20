@@ -203,7 +203,7 @@
 
     <main class="main-content">
         
-        <!-- <section id="home" class="section hero-section animated-section d-flex align-items-center">
+        <section id="home" class="section hero-section animated-section d-flex align-items-center">
             <div>
                 <h1>Mahan Choudhury</h1>
                 <p class="lead">Harnessing Artificial Intelligence for Advances in Medical Imaging and Clinical Decision Support.</p>
@@ -214,50 +214,8 @@
                     <a href="mailto:mahanc2210@gmail.com" class="btn btn-outline-secondary"><i class="fas fa-envelope me-2"></i>Contact Me</a>
                 </div>
             </div>
-        </section> -->
-        <section id="home" class="section hero-section animated-section d-flex align-items-center">
-    <div>
-        <h1>Mahan Choudhury</h1>
-        <p class="lead">Harnessing Artificial Intelligence for Advances in Medical Imaging and Clinical Decision Support.</p>
-        <p class="fs-5 mt-3">Incoming MASc student at McMaster University with a proven research background in applying deep learning to biomedical signals. My focus is on creating explainable AI-driven tools to enhance diagnostic processes and improve patient outcomes.</p>
-        <div class="hero-buttons">
-            <a href="#research" class="btn btn-primary"><i class="fas fa-flask me-2"></i>View My Research</a>
-            <a href="#" class="btn btn-outline-info" onclick="openPDFViewer('Choudhury__CV_application.pdf')"><i class="fas fa-file-pdf me-2"></i>View Academic CV</a>
-            <a href="mailto:mahanc2210@gmail.com" class="btn btn-outline-secondary"><i class="fas fa-envelope me-2"></i>Contact Me</a>
-        </div>
-    </div>
-    <!-- Add a div for the PDF viewer -->
-    <div id="pdf-viewer" style="display:none; width:100%; height:600px;">
-        <canvas id="pdf-canvas"></canvas>
-    </div>
-</section>
+        </section>
 
-<script>
-    function openPDFViewer(pdfUrl) {
-        const viewerDiv = document.getElementById('pdf-viewer');
-        viewerDiv.style.display = 'block';
-
-        // Load PDF.js and render the PDF
-        pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
-            pdf.getPage(1).then(function(page) {
-                const canvas = document.getElementById('pdf-canvas');
-                const context = canvas.getContext('2d');
-                const viewport = page.getViewport({ scale: 1.5 });
-
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-
-                page.render({
-                    canvasContext: context,
-                    viewport: viewport
-                });
-            });
-        }).catch(function(error) {
-            console.error('Error loading PDF: ', error);
-            alert('Failed to load the PDF. Please ensure the file path is correct.');
-        });
-    }
-</script>
 
 
         <section id="about" class="section animated-section">
