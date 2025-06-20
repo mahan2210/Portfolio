@@ -9,7 +9,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
     <style>
         :root {
             --primary-color: #3a506b; /* Slate Blue */
@@ -78,6 +77,8 @@
             padding: 40px 25px;
             text-align: center;
             transition: background-color 0.3s ease, border-color 0.3s ease;
+            /* FIX 1: Make sidebar scrollable on short screens */
+            overflow-y: auto;
         }
 
         .profile-picture {
@@ -136,28 +137,33 @@
         .card-header { background-color: transparent; border-bottom: 1px solid var(--border-color); font-weight: 600; color: var(--text-color); transition: color 0.3s ease, border-color 0.3s ease; }
         .card-body h5 { color: var(--primary-color); font-weight: 600; }
         
-        /* FIX: Global rule for text-muted */
         .text-muted { color: var(--text-muted-color) !important; }
 
         .skill-badge { background-color: var(--border-color); color: var(--text-muted-color); padding: 5px 12px; margin: 3px; border-radius: 5px; font-size: 0.8rem; font-weight: 500; display: inline-block; }
-        .project-skills { margin-top: 15px; }
-
-        .publication-link { text-decoration: none; color: var(--text-color); }
-        .publication-link:hover { color: var(--primary-color); }
-        .publication-link p { margin-bottom: 0; }
         
-        @media (max-width: 992px) {
-            .sidebar { position: static; width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); }
-            .main-content { margin-left: 0; padding: 30px; }
+        .publication-link { text-decoration: none; }
+        .publication-link h5 { color: var(--text-color); transition: color 0.3s ease; }
+        .publication-link:hover h5 { color: var(--primary-color); }
+        
+        /* Modal styling */
+        .modal-header { border-bottom: 1px solid var(--border-color); }
+        .modal-content { background-color: var(--body-bg); }
+
+        /* FIX 2: Changed breakpoint for tablet view */
+        @media (max-width: 767.98px) {
+            .sidebar {
+                position: static;
+                width: 100%;
+                height: auto; /* Allow height to adjust to content */
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 30px;
+            }
             .hero-buttons .btn { margin-bottom: 10px; }
         }
-        #pdf-viewer {
-        border: 1px solid #ccc;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        margin-top: 20px;
-        overflow: auto;
-                    }   
-
     </style>
 </head>
 <body data-bs-spy="scroll" data-bs-target="#sidebar-nav-spy" data-bs-offset="120">
@@ -209,14 +215,12 @@
                 <p class="lead">Harnessing Artificial Intelligence for Advances in Medical Imaging and Clinical Decision Support.</p>
                 <p class="fs-5 mt-3">Incoming MASc student at McMaster University with a research background in applying deep learning to biomedical signals and image processing. My focus is to establish a solid foundation for developing optimized and cutting-edge solutions for real-world healthcare challenges to enhance diagnostic processes and improve patient outcomes.</p>
                 <div class="hero-buttons">
-                    <a href="#research" class="btn btn-primary"><i class="fas fa-flask me-2"></i>View My Research</a>
-                    <a href="Choudhury__CV_application.pdf" target="_blank" class="btn btn-outline-info"><i class="fas fa-file-pdf me-2"></i>View Academic CV</a>
+                    <a href="#research" class="btn btn-outline-primary"><i class="fas fa-flask me-2"></i>View My Research</a>
+                    <a href="#" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#cvModal"><i class="fas fa-file-pdf me-2"></i>View Academic CV</a>
                     <a href="mailto:mahanc2210@gmail.com" class="btn btn-outline-secondary"><i class="fas fa-envelope me-2"></i>Contact Me</a>
                 </div>
             </div>
         </section>
-
-
 
         <section id="about" class="section animated-section">
             <h2 class="section-title">About Me</h2>
@@ -248,26 +252,6 @@
             </div>
         </section>
 
-
-        <section id="research" class="section animated-section">
-            <h2 class="section-title">Research & Publications</h2>
-             <div class="card mb-4">
-                <div class="card-header">Published Journal Article</div>
-                <div class="card-body">
-                    <a href="https://doi.org/10.1016/j.compbiomed.2025.109769" target="_blank" class="publication-link text-decoration-none">
-                        <h5 class="card-title">Explainable AI-driven scalogram analysis and optimized transfer learning for sleep apnea detection with single-lead electrocardiograms</h5>
-                        <p class="text-muted mb-0"><b>M. Choudhury</b>, M. Tanvir, M. A. Yousuf, N. Islam, and M. Z. Uddin | <em><strong>Computers in Biology and Medicine</strong></em>, vol. 187, p. 109769, Feb. 2025.</p>
-                    </a>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-header">Undergraduate Thesis | Supervised by Dr. Mohammad Abu Yousuf </div>
-                <div class="card-body">
-                    <h5 class="card-title">Detection of Sleep Apnea Using Scalogram Based Modified Transfer Learning</h5>
-                    <p>This research involved processing single-lead ECG data with a band-pass filter, transforming it into scalograms using Continuous Wavelet Transform, and integrating an optimized pre-trained CNN architecture to detect sleep apnea events. </p>
-                </div>
-            </div>
-        </section>
         <section id="awards" class="section animated-section">
             <h2 class="section-title">Awards & Achievements</h2>
             <div class="card">
@@ -283,99 +267,19 @@
             </div>
         </section>
 
-        
-        <!-- <section id="projects" class="section animated-section">
-            <h2 class="section-title">Selected Projects</h2>
-             <div class="row g-4">
-                <div class="col-md-6">
-                    <div class="card h-100">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">Cardiovascular Disease Detection</h5>
-                            <p class="flex-grow-1">Developed a majority-vote ensemble method using five distinct machine learning models to improve the prediction accuracy of heart disease. </p>
-                            <div class="project-skills mt-auto pt-3">
-                                <span class="skill-badge">Python</span>
-                                <span class="skill-badge">Jupyter NB</span>
-                                <span class="skill-badge">Ensemble Methods</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card h-100">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">Departmental Website</h5>
-                            <p class="flex-grow-1">Built a full-stack departmental website with role-based access for students, teachers, and administrators to manage academic activities. </p>
-                            <div class="project-skills mt-auto pt-3">
-                                <span class="skill-badge">HTML/CSS</span>
-                                <span class="skill-badge">JavaScript</span>
-                                <span class="skill-badge">NodeJS</span>
-                                <span class="skill-badge">Git</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section> -->
-                <section id="projects" class="section animated-section">
-            <h2 class="section-title">Selected Projects</h2>
-             <div class="row g-4">
-                <div class="col-md-6">
-                    <div class="card h-100 animated-section">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">Cardiovascular Disease Detection</h5>
-                            <p class="flex-grow-1">Developed a majority-vote ensemble method using five distinct machine learning models to improve the prediction accuracy of heart disease. </p>
-                            <div class="project-skills">
-                                <span class="skill-badge">Python</span>
-                                <span class="skill-badge">Jupyter NB</span>
-                                <span class="skill-badge">Ensemble Methods</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card h-100 animated-section">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">Departmental Website</h5>
-                            <p class="flex-grow-1">Built a full-stack departmental website with role-based access for students, teachers, and administrators to manage academic activities. </p>
-                            <div class="project-skills">
-                                <span class="skill-badge">HTML/CSS</span>
-                                <span class="skill-badge">JavaScript</span>
-                                <span class="skill-badge">NodeJS</span>
-                                <span class="skill-badge">Bootstrap</span>
-                                <span class="skill-badge">Git</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                 <div class="col-md-6">
-                    <div class="card h-100 animated-section">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">Hospital Management System</h5>
-                            <p class="flex-grow-1">Developed a full-stack HMS with separate login systems, allowing patients to book appointments and doctors to manage schedules. </p>
-                             <div class="project-skills">
-                                <span class="skill-badge">PHP</span>
-                                <span class="skill-badge">Laravel</span>
-                                <span class="skill-badge">Bootstrap</span>
-                                <span class="skill-badge">HTML/CSS</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                 <div class="col-md-6">
-                    <div class="card h-100 animated-section">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">Blood Bank Management System</h5>
-                            <p class="flex-grow-1">Created a Java-based desktop application for donors and receivers to connect, with an admin panel for database management. </p>
-                             <div class="project-skills">
-                                <span class="skill-badge">Java</span>
-                                <span class="skill-badge">JFrame</span>
-                                <span class="skill-badge">MySQL</span>
-                            </div>
-                        </div>
-                    </div>
+        <section id="research" class="section animated-section">
+            <h2 class="section-title">Research & Publications</h2>
+             <div class="card mb-4">
+                <div class="card-header">Published Journal Article</div>
+                <div class="card-body">
+                    <a href="https://doi.org/10.1016/j.compbiomed.2025.109769" target="_blank" class="publication-link text-decoration-none">
+                        <h5 class="card-title">Explainable AI-driven scalogram analysis and optimized transfer learning for sleep apnea detection with single-lead electrocardiograms</h5>
+                        <p class="text-muted mb-0"><b>M. Choudhury</b>, M. Tanvir, M. A. Yousuf, N. Islam, and M. Z. Uddin | <em><strong>Computers in Biology and Medicine</strong></em>, vol. 187, p. 109769, Feb. 2025.</p>
+                    </a>
                 </div>
             </div>
         </section>
+
         <section id="experience" class="section animated-section">
             <h2 class="section-title">Industry Experience</h2>
             <div class="card">
@@ -390,6 +294,29 @@
                 </div>
             </div>
         </section>
+
+        <section id="projects" class="section animated-section">
+            <h2 class="section-title">Selected Projects</h2>
+             <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">Cardiovascular Disease Detection</h5>
+                            <p class="flex-grow-1">Developed a majority-vote ensemble method using five distinct machine learning models to improve the prediction accuracy of heart disease. </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">Departmental Website</h5>
+                            <p class="flex-grow-1">Built a full-stack departmental website with role-based access for students, teachers, and administrators to manage academic activities. </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
         <section id="skills" class="section animated-section">
             <h2 class="section-title">Core Competencies</h2>
             <div class="mb-3">
@@ -438,6 +365,20 @@
         </section>
 
     </main>
+
+    <div class="modal fade" id="cvModal" tabindex="-1" aria-labelledby="cvModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="cvModalLabel">Academic Curriculum Vitae</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-0">
+            <iframe src="Choudhury__CV_application.pdf" style="width: 100%; height: 100%; border: none;" title="Mahan Choudhury's CV"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script>
     document.addEventListener('DOMContentLoaded', function () {
