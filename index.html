@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mahan Choudhury | Academic Portfolio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #3a506b; /* Slate Blue */
+            --primary-hover: #2c3e50;
+            --sidebar-bg: rgba(255, 255, 255, 0.85);
+            --body-bg: #f4f7f9;
+            --text-color: #212529;
+            --text-muted-color: #6c757d;
+            --card-bg: #ffffff;
+            --card-shadow: 0 4px 25px rgba(0,0,0,0.05);
+            --card-hover-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            --border-color: #e9ecef;
+            --spotlight-color: rgba(58, 80, 107, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #58a6ff;
+            --primary-hover: #79b8ff;
+            --sidebar-bg: rgba(28, 33, 40, 0.85);
+            --body-bg: #0d1117;
+            --text-color: #c9d1d9;
+            --text-muted-color: #8b949e;
+            --card-bg: #161b22;
+            --card-shadow: 0 0 0 1px #30363d;
+            --card-hover-shadow: 0 0 0 1px #8b949e;
+            --border-color: #30363d;
+            --spotlight-color: rgba(88, 166, 255, 0.08);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            scroll-padding-top: 40px;
+        }
+
+        /* --- Cursor Spotlight --- */
+        .spotlight {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--spotlight-color) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            transition: background 0.3s ease;
+        }
+
+        /* --- Sidebar & Navigation --- */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 320px;
+            background-color: var(--sidebar-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 40px 25px;
+            text-align: center;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .profile-picture {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 15px auto;
+            border: 5px solid var(--body-bg);
+        }
+
+        .sidebar h2 { font-weight: 600; color: var(--text-color); }
+        .contact-info { text-align: left; margin: 15px 0; font-size: 0.9rem; }
+        .contact-info p { margin-bottom: 5px; }
+        .contact-info a { color: var(--text-muted-color); text-decoration: none; transition: color 0.3s ease; }
+        .contact-info a:hover { color: var(--primary-color); }
+        .contact-info i { margin-right: 10px; width: 16px; }
+
+        .sidebar-nav { list-style: none; padding: 0; margin: 15px 0; text-align: left; flex-grow: 1; }
+        .sidebar-nav a { display: block; padding: 10px 15px; color: var(--text-muted-color); text-decoration: none; border-radius: 5px; transition: all 0.3s ease; }
+        .sidebar-nav a:hover { background-color: var(--primary-hover); color: #ffffff; transform: translateX(5px); }
+        .sidebar-nav a.active { color: var(--primary-color); font-weight: 600; }
+        .sidebar-nav i { margin-right: 15px; width: 20px; }
+
+        /* --- Theme Switcher --- */
+        .theme-switcher { display: flex; align-items: center; justify-content: center; padding: 10px; cursor: pointer; border-radius: 5px; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary-color); }
+        input:checked + .slider:before { transform: translateX(24px); }
+        .theme-switcher span { margin-left: 10px; font-weight: 500; }
+        
+        /* --- Main Content & Sections --- */
+        .main-content { margin-left: 320px; padding: 60px; }
+        .section { padding-top: 40px; margin-bottom: 50px; }
+        
+        .animated-section { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .animated-section.is-visible { opacity: 1; transform: translateY(0); }
+
+        .section-title { font-size: 2.2rem; font-weight: 700; color: var(--text-color); position: relative; padding-bottom: 15px; margin-bottom: 40px; }
+        .section-title::after { content: ''; position: absolute; bottom: 0; left: 0; width: 70px; height: 4px; background: linear-gradient(90deg, var(--primary-color), var(--primary-hover)); border-radius: 2px; }
+
+        .hero-section { min-height: 75vh; }
+        .hero-section h1 { font-size: 3.2rem; font-weight: 700; color: var(--text-color); }
+        .hero-section .lead { font-size: 1.2rem; color: var(--primary-color); font-weight: 600; margin-top: 10px; }
+        .hero-buttons .btn { margin-right: 10px; margin-top: 25px; padding: 12px 25px; font-weight: 600; border-radius: 8px; }
+        .btn-primary { background-color: var(--primary-color); border-color: var(--primary-color); }
+        .btn-primary:hover { background-color: var(--primary-hover); border-color: var(--primary-hover); }
+        .btn-outline-secondary { color: var(--text-muted-color); border-color: var(--border-color); }
+        .btn-outline-secondary:hover { color: var(--text-color); background-color: var(--border-color); }
+
+        .card { background-color: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 8px; box-shadow: var(--card-shadow); transition: transform 0.3s ease, box-shadow 0.3s ease, color 0.3s ease, background-color 0.3s ease; }
+        .card:hover { transform: translateY(-5px); box-shadow: var(--card-hover-shadow); }
+        .card-header { background-color: transparent; border-bottom: 1px solid var(--border-color); font-weight: 600; color: var(--text-color); transition: color 0.3s ease, border-color 0.3s ease; }
+        .card-body h5 { color: var(--primary-color); font-weight: 600; }
+        
+        /* FIX: Global rule for text-muted */
+        .text-muted { color: var(--text-muted-color) !important; }
+
+        .skill-badge { background-color: var(--border-color); color: var(--text-muted-color); padding: 5px 12px; margin: 3px; border-radius: 5px; font-size: 0.8rem; font-weight: 500; display: inline-block; }
+        .project-skills { margin-top: 15px; }
+
+        .publication-link { text-decoration: none; color: var(--text-color); }
+        .publication-link:hover { color: var(--primary-color); }
+        .publication-link p { margin-bottom: 0; }
+        
+        @media (max-width: 992px) {
+            .sidebar { position: static; width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); }
+            .main-content { margin-left: 0; padding: 30px; }
+            .hero-buttons .btn { margin-bottom: 10px; }
+        }
+        #pdf-viewer {
+        border: 1px solid #ccc;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        overflow: auto;
+                    }   
+
+    </style>
+</head>
+<body data-bs-spy="scroll" data-bs-target="#sidebar-nav-spy" data-bs-offset="120">
+
+    <div class="spotlight"></div>
+
+    <aside class="sidebar">
+        <img src="profile.jpg" alt="Mahan Choudhury" class="profile-picture">
+        <h2>Mahan Choudhury</h2>
+        <p class="text-muted">MASc. in Biomedical Engineering</p>
+
+        <div class="contact-info">
+            <p><a href="mailto:mahanc2210@gmail.com" title="Email Mahan"><i class="fas fa-envelope fa-fw"></i>mahanc2210@gmail.com</a></p>
+            <p><a href="https://www.linkedin.com/in/mahan-choudhury-989882192/" target="_blank" title="LinkedIn Profile"><i class="fab fa-linkedin fa-fw"></i>LinkedIn</a></p>
+            <p><a href="https://github.com/mahan2210" target="_blank" title="GitHub Profile"><i class="fab fa-github fa-fw"></i>GitHub</a></p>
+            <p><a href="https://scholar.google.com/citations?user=4c3O7yAAAAAJ&hl=en" target="_blank" title="Google Scholar Profile"><i class="fas fa-graduation-cap fa-fw"></i>Google Scholar</a></p>
+        </div>
+
+        <nav class="sidebar-nav" id="sidebar-nav-spy">
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="#home"><i class="fas fa-home fa-fw"></i>Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#about"><i class="fas fa-user fa-fw"></i>About</a></li>
+                <li class="nav-item"><a class="nav-link" href="#education"><i class="fas fa-graduation-cap fa-fw"></i>Education</a></li>
+                <li class="nav-item"><a class="nav-link" href="#awards"><i class="fas fa-trophy fa-fw"></i>Awards</a></li>
+                <li class="nav-item"><a class="nav-link" href="#research"><i class="fas fa-flask fa-fw"></i>Research</a></li>
+                <li class="nav-item"><a class="nav-link" href="#experience"><i class="fas fa-briefcase fa-fw"></i>Industry Experience</a></li>
+                <li class="nav-item"><a class="nav-link" href="#projects"><i class="fas fa-cogs fa-fw"></i>Projects</a></li>
+                <li class="nav-item"><a class="nav-link" href="#skills"><i class="fas fa-code fa-fw"></i>Skills</a></li>
+                <li class="nav-item"><a class="nav-link" href="#references"><i class="fas fa-address-book fa-fw"></i>Reference</a></li>
+            </ul>
+        </nav>
+        
+        <div class="mt-auto">
+             <label for="theme-switch" class="theme-switcher">
+                <label class="switch">
+                    <input type="checkbox" id="theme-switch">
+                    <span class="slider round"></span>
+                </label>
+                <span id="theme-text">Dark Mode</span>
+            </label>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        
+        <!-- <section id="home" class="section hero-section animated-section d-flex align-items-center">
+            <div>
+                <h1>Mahan Choudhury</h1>
+                <p class="lead">Harnessing Artificial Intelligence for Advances in Medical Imaging and Clinical Decision Support.</p>
+                <p class="fs-5 mt-3">Incoming MASc student at McMaster University with a proven research background in applying deep learning to biomedical signals. My focus is on creating explainable AI-driven tools to enhance diagnostic processes and improve patient outcomes.</p>
+                <div class="hero-buttons">
+                    <a href="#research" class="btn btn-primary"><i class="fas fa-flask me-2"></i>View My Research</a>
+                    <a href="Choudhury__CV_application.pdf" target="_blank" class="btn btn-outline-info"><i class="fas fa-file-pdf me-2"></i>View Academic CV</a>
+                    <a href="mailto:mahanc2210@gmail.com" class="btn btn-outline-secondary"><i class="fas fa-envelope me-2"></i>Contact Me</a>
+                </div>
+            </div>
+        </section> -->
+        <section id="home" class="section hero-section animated-section d-flex align-items-center">
+    <div>
+        <h1>Mahan Choudhury</h1>
+        <p class="lead">Harnessing Artificial Intelligence for Advances in Medical Imaging and Clinical Decision Support.</p>
+        <p class="fs-5 mt-3">Incoming MASc student at McMaster University with a proven research background in applying deep learning to biomedical signals. My focus is on creating explainable AI-driven tools to enhance diagnostic processes and improve patient outcomes.</p>
+        <div class="hero-buttons">
+            <a href="#research" class="btn btn-primary"><i class="fas fa-flask me-2"></i>View My Research</a>
+            <a href="#" class="btn btn-outline-info" onclick="openPDFViewer('/media/mahan/New Volume/portfoliosite/Choudhury__CV_application.pdf')"><i class="fas fa-file-pdf me-2"></i>View Academic CV</a>
+            <a href="mailto:mahanc2210@gmail.com" class="btn btn-outline-secondary"><i class="fas fa-envelope me-2"></i>Contact Me</a>
+        </div>
+    </div>
+    <!-- Add a div for the PDF viewer -->
+    <div id="pdf-viewer" style="display:none; width:100%; height:600px;">
+        <canvas id="pdf-canvas"></canvas>
+    </div>
+</section>
+
+<script>
+    function openPDFViewer(pdfUrl) {
+        const viewerDiv = document.getElementById('pdf-viewer');
+        viewerDiv.style.display = 'block';
+
+        // Load PDF.js and render the PDF
+        pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
+            pdf.getPage(1).then(function(page) {
+                const canvas = document.getElementById('pdf-canvas');
+                const context = canvas.getContext('2d');
+                const viewport = page.getViewport({ scale: 1.5 });
+
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                });
+            });
+        }).catch(function(error) {
+            console.error('Error loading PDF: ', error);
+            alert('Failed to load the PDF. Please ensure the file path is correct.');
+        });
+    }
+</script>
+
+
+        <section id="about" class="section animated-section">
+            <h2 class="section-title">About Me</h2>
+            <p>I am a dedicated researcher and incoming Master's student in Biomedical Engineering at McMaster University, set to begin in September 2025. I graduated from Bangladesh University of Professionals with a B.Sc. in Information and Communication Engineering, achieving a CGPA of 3.89/4.00 and ranking third in my class. My core research interest lies in the application of Computer Vision and Machine Learning to Medical Imaging and Bio-Medical Image Processing. I am passionate about developing innovative, AI-powered solutions that can provide robust support for clinical decision-making.</p>
+        </section>
+        
+        <section id="education" class="section animated-section">
+            <h2 class="section-title">Education</h2>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">MASc in Biomedical Engineering</h5>
+                            <p class="text-muted mb-2">Incoming Student | Sep 2025 – Aug 2027</p>
+                            <p></strong><a href="https://www.mcmaster.ca/" style="color: inherit; text-decoration: none;"> McMaster University, Hamilton, Ontario, Canada</a></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">B.Sc. in Information and Communication Engineering</h5>
+                            <p class="text-muted mb-2">Jan 2020 – Dec 2023</p>
+                             <p></strong><a href="https://bup.edu.bd/" style="color: inherit; text-decoration: none;"> Bangladesh University of Professionals, Dhaka, Bangladesh</a></p>
+                            <p class="mt-2"><strong>Result:</strong> CGPA: 3.89/4.00 (3rd Position)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="research" class="section animated-section">
+            <h2 class="section-title">Research & Publications</h2>
+             <div class="card mb-4">
+                <div class="card-header">Published Journal Article</div>
+                <div class="card-body">
+                    <a href="https://doi.org/10.1016/j.compbiomed.2025.109769" target="_blank" class="publication-link text-decoration-none">
+                        <h5 class="card-title">Explainable AI-driven scalogram analysis and optimized transfer learning for sleep apnea detection with single-lead electrocardiograms</h5>
+                        <p class="text-muted mb-0">M. Choudhury, M. Tanvir, M. A. Yousuf, N. Islam, and M. Z. Uddin | <em><strong>Computers in Biology and Medicine</strong></em>, vol. 187, p. 109769, Feb. 2025.</p>
+                    </a>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">Undergraduate Thesis | Supervised by Dr. Mohammad Abu Yousuf </div>
+                <div class="card-body">
+                    <h5 class="card-title">Detection of Sleep Apnea Using Scalogram Based Modified Transfer Learning</h5>
+                    <p>This research involved processing single-lead ECG data with a band-pass filter, transforming it into scalograms using Continuous Wavelet Transform, and integrating an optimized pre-trained CNN architecture to detect sleep apnea events. </p>
+                </div>
+            </div>
+        </section>
+        <section id="awards" class="section animated-section">
+            <h2 class="section-title">Awards & Achievements</h2>
+            <div class="card">
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2"><a href="https://vectorinstitute.ai/ontario-ai-talent-gets-2-1-million-boost-as-vector-institute-awards-120-graduate-scholarships/" style="color: inherit; text-decoration: none;"><i class="fas fa-trophy me-2 text-warning"></i>Awarded a merit-based Vector Scholarship in Artificial Intelligence, valued at $17,500.</a></li>
+                        <li class="mb-2"><i class="fas fa-award me-2 text-primary"></i>Dean's Appreciation Letter for achieving a GPA of 4.00 out of 4.00 in a particular semester.</li>
+                        <li class="mb-2"><i class="fas fa-award me-2 text-primary"></i>BUP scholarship awarded for outstanding academic performance at the undergraduate level (Top 3%).</li>
+                        <li class="mb-2"><i class="fas fa-pen-alt me-2 text-muted"></i>Runner-up in Article Writing segment in World Arduino day 2021.</li>
+                        <li><i class="fas fa-school me-2 text-muted"></i>Government scholarship in talent-pool for securing 12th merit position (Top 1%) in the Junior School Certificate Examination, 2014.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        
+        <!-- <section id="projects" class="section animated-section">
+            <h2 class="section-title">Selected Projects</h2>
+             <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">Cardiovascular Disease Detection</h5>
+                            <p class="flex-grow-1">Developed a majority-vote ensemble method using five distinct machine learning models to improve the prediction accuracy of heart disease. </p>
+                            <div class="project-skills mt-auto pt-3">
+                                <span class="skill-badge">Python</span>
+                                <span class="skill-badge">Jupyter NB</span>
+                                <span class="skill-badge">Ensemble Methods</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">Departmental Website</h5>
+                            <p class="flex-grow-1">Built a full-stack departmental website with role-based access for students, teachers, and administrators to manage academic activities. </p>
+                            <div class="project-skills mt-auto pt-3">
+                                <span class="skill-badge">HTML/CSS</span>
+                                <span class="skill-badge">JavaScript</span>
+                                <span class="skill-badge">NodeJS</span>
+                                <span class="skill-badge">Git</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section> -->
+                <section id="projects" class="section animated-section">
+            <h2 class="section-title">Selected Projects</h2>
+             <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card h-100 animated-section">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">Cardiovascular Disease Detection</h5>
+                            <p class="flex-grow-1">Developed a majority-vote ensemble method using five distinct machine learning models to improve the prediction accuracy of heart disease. </p>
+                            <div class="project-skills">
+                                <span class="skill-badge">Python</span>
+                                <span class="skill-badge">Jupyter NB</span>
+                                <span class="skill-badge">Ensemble Methods</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 animated-section">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">Departmental Website</h5>
+                            <p class="flex-grow-1">Built a full-stack departmental website with role-based access for students, teachers, and administrators to manage academic activities. </p>
+                            <div class="project-skills">
+                                <span class="skill-badge">HTML/CSS</span>
+                                <span class="skill-badge">JavaScript</span>
+                                <span class="skill-badge">NodeJS</span>
+                                <span class="skill-badge">Bootstrap</span>
+                                <span class="skill-badge">Git</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <div class="col-md-6">
+                    <div class="card h-100 animated-section">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">Hospital Management System</h5>
+                            <p class="flex-grow-1">Developed a full-stack HMS with separate login systems, allowing patients to book appointments and doctors to manage schedules. </p>
+                             <div class="project-skills">
+                                <span class="skill-badge">PHP</span>
+                                <span class="skill-badge">Laravel</span>
+                                <span class="skill-badge">Bootstrap</span>
+                                <span class="skill-badge">HTML/CSS</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <div class="col-md-6">
+                    <div class="card h-100 animated-section">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">Blood Bank Management System</h5>
+                            <p class="flex-grow-1">Created a Java-based desktop application for donors and receivers to connect, with an admin panel for database management. </p>
+                             <div class="project-skills">
+                                <span class="skill-badge">Java</span>
+                                <span class="skill-badge">JFrame</span>
+                                <span class="skill-badge">MySQL</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="experience" class="section animated-section">
+            <h2 class="section-title">Industry Experience</h2>
+            <div class="card">
+                <div class="card-header">
+                    <strong>Web Development Intern</strong> | Business Automation Limited | Oct 2022 – Dec 2022
+                </div>
+                <div class="card-body">
+                   <ul class="mb-0">
+                       <li>Built up an understanding of the industrial data acquisition process and the web development processes in accordance with the clients' needs. </li>
+                       <li>Worked with the one-stop service team of the company and contributed to a project of ICT Division performing localization of Dashboard using Laravel. </li>
+                   </ul>
+                </div>
+            </div>
+        </section>
+        <section id="skills" class="section animated-section">
+            <h2 class="section-title">Core Competencies</h2>
+            <div class="mb-3">
+                <strong>Languages:</strong>
+                <div><span class="skill-badge">Python</span><span class="skill-badge">Java</span><span class="skill-badge">MATLAB</span><span class="skill-badge">SQL</span><span class="skill-badge">JavaScript</span><span class="skill-badge">PHP</span><span class="skill-badge">HTML/CSS</span></div>
+            </div>
+            <div class="mb-3">
+                <strong>Libraries & Frameworks:</strong>
+                <div><span class="skill-badge">PyTorch</span><span class="skill-badge">Scikit-learn</span><span class="skill-badge">Pandas</span><span class="skill-badge">NumPy</span><span class="skill-badge">Matplotlib</span><span class="skill-badge">Seaborn</span></div>
+            </div>
+             <div>
+                <strong>Developer Tools:</strong>
+                <div><span class="skill-badge">Git</span><span class="skill-badge">PyCharm</span><span class="skill-badge">VS Code</span><span class="skill-badge">Jupyter</span></div>
+            </div>
+        </section>
+
+        <section id="references" class="section animated-section">
+            <h2 class="section-title">Academic References</h2>
+            <p class="text-muted mb-4">Contact details are available upon request.</p>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                           <h5 class="card-title">Dr. Mohammad Abu Yousuf</h5>
+                           <p class="text-muted">Professor</p>
+                           <hr style="border-color: var(--border-color);">
+                           <p><strong>Institution:</strong><a href="https://juniv.edu/" style="color: inherit; text-decoration: none;"> Jahangirnagar University</a> </p>
+                           <p><strong>Email:</strong> <a href="mailto:yousuf@juniv.edu" style="color: inherit; text-decoration: none;">yousuf@juniv.edu</a></p>
+                           <p><strong>Relationship:</strong> Supervised my undergraduate thesis on Sleep Apnea detection using single-lead ECG signals. </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                     <div class="card h-100">
+                        <div class="card-body">
+                           <h5 class="card-title">Dr. Ashirbani Saha</h5>
+                           <p class="text-muted">Assistant Professor</p>
+                           <hr style="border-color: var(--border-color);">
+                           <p><strong>Institution:</strong><a href="https://www.mcmaster.ca/" style="color: inherit; text-decoration: none;"> McMaster University</a> </p>
+                           <p><strong>Email:</strong> <a href="mailto:sahaa16@mcmaster.ca" style="color: inherit; text-decoration: none;">sahaa16@mcmaster.ca</a></p>
+                           <p><strong>Relationship:</strong> Will supervise my research in McMaster University on Medical Imaging.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // --- Cursor Spotlight ---
+        const spotlight = document.querySelector('.spotlight');
+        if (spotlight) {
+            window.addEventListener('mousemove', (e) => {
+                spotlight.style.left = e.clientX + 'px';
+                spotlight.style.top = e.clientY + 'px';
+            });
+        }
+
+        // --- Theme Switcher Logic ---
+        const themeSwitch = document.getElementById('theme-switch');
+        const themeText = document.getElementById('theme-text');
+        const htmlEl = document.documentElement;
+        
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        htmlEl.setAttribute('data-theme', currentTheme);
+        if (currentTheme === 'dark') {
+            themeSwitch.checked = true;
+            themeText.textContent = 'Light Mode';
+        } else {
+            themeText.textContent = 'Dark Mode';
+        }
+
+        themeSwitch.addEventListener('change', function () {
+            if (this.checked) {
+                htmlEl.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                themeText.textContent = 'Light Mode';
+            } else {
+                htmlEl.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+                themeText.textContent = 'Dark Mode';
+            }
+        });
+
+        // --- Scroll Animation ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.animated-section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // --- Bootstrap Scrollspy & Smooth Scroll ---
+        new bootstrap.ScrollSpy(document.body, {
+            target: '#sidebar-nav-spy',
+            offset: 120
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if(href.length > 1 && document.querySelector(href)) {
+                   e.preventDefault();
+                    document.querySelector(href).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>
